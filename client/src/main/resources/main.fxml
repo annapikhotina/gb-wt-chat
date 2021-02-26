@@ -1,0 +1,21 @@
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+<VBox fx:controller="Controller"
+      xmlns:fx="http://javafx.com/fxml" alignment="center">
+
+  <stylesheets>
+    <URL value="@/css/style.css"/>
+  </stylesheets>
+
+  <TextArea fx:id="chatArea" VBox.vgrow="ALWAYS" editable="false" wrapText="true"/>
+
+  <HBox maxHeight="25">
+    <TextArea fx:id="inputArea" HBox.hgrow="NEVER" minHeight="NaN" wrapText="true" promptText="Message..."
+              onKeyPressed="#sendMessageByKey"/>
+    <Button text="Send" HBox.hgrow="NEVER" minWidth="70" onAction="#sendMessage"/>
+  </HBox>
+
+</VBox>
