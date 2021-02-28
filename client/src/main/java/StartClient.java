@@ -5,12 +5,12 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class StartClient extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/main.fxml"));
-        primaryStage.setTitle("Zoo");
+        primaryStage.setTitle("Walkie Talkie");
         primaryStage.getIcons().add(new Image("/images/send_button_paw.png"));
         primaryStage.setScene(new Scene(root, 400, 500));
         primaryStage.show();
