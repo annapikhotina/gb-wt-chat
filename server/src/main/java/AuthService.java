@@ -1,3 +1,5 @@
 public interface AuthService {
-  public String getNickNameByLoginAndPassword(String login, String password);
+
+  String getNickNameByLoginAndPassword(String login, String password);
+  boolean registration(String login, String password, String nickname);
 }

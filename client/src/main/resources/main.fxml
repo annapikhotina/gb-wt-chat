@@ -5,6 +5,7 @@
 <?import java.net.URL?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ListView?>
 <VBox fx:controller="Controller"
       xmlns:fx="http://javafx.com/fxml" alignment="center">
 
@@ -14,11 +15,17 @@
 
   <HBox fx:id="authPanel" maxHeight="25">
     <TextField fx:id="loginField" HBox.hgrow="NEVER" minHeight="NaN" promptText="Login..."/>
-    <PasswordField fx:id="passwordField" HBox.hgrow="NEVER" minHeight="NaN" promptText="Password..." onAction="#tryToLogin"/>
+    <PasswordField fx:id="passwordField" HBox.hgrow="NEVER" minHeight="NaN" promptText="Password..."
+                   onAction="#tryToLogin"/>
     <Button text="Login" HBox.hgrow="NEVER" minWidth="70" onAction="#tryToLogin"/>
+    <Button text="Reg" HBox.hgrow="NEVER" minWidth="70" onAction="#showRegWindow"/>
   </HBox>
 
-  <TextArea fx:id="chatArea" VBox.vgrow="ALWAYS" editable="false" wrapText="true"/>
+  <HBox VBox.vgrow="ALWAYS">
+    <TextArea fx:id="chatArea" HBox.hgrow="ALWAYS" editable="false" wrapText="true"/>
+    <ListView fx:id="clientList" visible="false" managed="false" minWidth="100"
+              onMouseClicked="#clientListMouseReleased"/>
+  </HBox>
 
   <HBox fx:id="messagePanel" maxHeight="25" visible="false" managed="false">
     <TextArea fx:id="inputArea" HBox.hgrow="NEVER" minHeight="NaN" wrapText="true" promptText="Message..."

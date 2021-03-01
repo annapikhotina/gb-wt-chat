@@ -2,6 +2,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import commands.Commands;
 
 public class ClientHandler {
@@ -10,6 +11,7 @@ public class ClientHandler {
   private DataInputStream in;
   private DataOutputStream out;
   private String nickNme;
+  private String login;
 
   public ClientHandler(Server server, Socket socket) {
     try {
@@ -20,35 +22,61 @@ public class ClientHandler {
 
       new Thread(() -> {
         try {
-          //Auth loop
+
+          //Timeout
+          socket.setSoTimeout(5000);
+
           while (true) {
             String message = in.readUTF();
 
+            //Disconnection
             if (message.equals(Commands.END)) {
               out.writeUTF(Commands.END);
               throw new RuntimeException("Client is disconnecting");
             }
 
+            //Authentication
             if (message.startsWith(Commands.AUTH)) {
               String[] token = message.split("\\s");
-              if(token.length <3) {
+              if (token.length < 3) {
                 continue;
               }
               String tempNickName = server.getAuthService().getNickNameByLoginAndPassword(token[1], token[2]);
+              login = token[1];
               if (tempNickName != null) {
-                nickNme = tempNickName;
-                sendMessage(Commands.AUTH_OK + " " + nickNme);
-                System.out.println("Client: " + socket.getRemoteSocketAddress() + " connected with nick: " + nickNme);
-                server.subscribe(this);
-                break;
+                if (!server.isLoginAuthorized(login)) {
+                  nickNme = tempNickName;
+                  sendMessage(Commands.AUTH_OK + " " + nickNme);
+                  System.out.println("Client: " + socket.getRemoteSocketAddress() + " connected with nick: " + nickNme);
+                  server.subscribe(this);
+                  socket.setSoTimeout(0);
+                  break;
+                } else {
+                  sendMessage("User with this login has been authorized");
+                }
               } else {
                 sendMessage("Auth Faild");
               }
+            }
 
+            //Registration
+            if (message.startsWith(Commands.Reg)) {
+              String[] token = message.split("\\s", 4);
+              if (token.length < 4) {
+                continue;
+              }
+
+              boolean regSuccess = server.getAuthService().registration(token[1], token[2], token[3]);
+
+              if(regSuccess) {
+                sendMessage(Commands.RegOK);
+              } else {
+                sendMessage(Commands.RegNO);
+              }
             }
           }
 
-          //Chat loop
+          //Chatting
           while (true) {
             String message = in.readUTF();
 
@@ -56,7 +84,28 @@ public class ClientHandler {
               out.writeUTF(Commands.END);
               break;
             }
-            server.broadcastMessage(this, message);
+
+            if (message.startsWith(Commands.PRIVATE_MESSAGE)) {
+              String[] token = message.split("\\s", 3);
+
+              if (token.length < 3) {
+                continue;
+              }
+
+              server.privateMessage(this, token[1], token[2]);
+
+            } else {
+              server.broadcastMessage(this, message);
+            }
+
+          }
+        }
+        catch (SocketTimeoutException e) {
+          try {
+            out.writeUTF(Commands.END);
+          }
+          catch (IOException ioException) {
+            ioException.printStackTrace();
           }
         }
         catch (RuntimeException e) {
@@ -67,7 +116,7 @@ public class ClientHandler {
         }
         finally {
           server.unsubscribe(this);
-          System.out.println("Client with nick: " + nickNme + "disconnected");
+          System.out.println("Client with nick [" + nickNme + "] disconnected");
           try {
             socket.close();
           }
@@ -94,5 +143,9 @@ public class ClientHandler {
 
   public String getNickNme() {
     return nickNme;
+  }
+
+  public String getLogin() {
+    return login;
   }
 }

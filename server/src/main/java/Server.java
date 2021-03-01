@@ -40,32 +40,60 @@ public class Server {
   }
 
   public void broadcastMessage(ClientHandler sender, String msg) {
-    String message = "";
+    String message = String.format("[%s] %s", sender.getNickNme(), msg);
     for (ClientHandler client : clients) {
-      if (msg.startsWith(Commands.PRIVATE_MESSAGE)) {
-        String[] text = msg.split("\\s", 3);
-        if (client.getNickNme().equals(text[1])) {
-          message = String.format("[%s] %s", sender.getNickNme(), text[2]);
-          client.sendMessage(message);
+      client.sendMessage(message);
+    }
+  }
+
+
+  public void privateMessage(ClientHandler sender, String receiver, String msg) {
+    String message = String.format("[%s] to [%s]: %s", sender.getNickNme(), receiver, msg);
+
+    for (ClientHandler client : clients) {
+      if (client.getNickNme().equals(receiver)) {
+        client.sendMessage(message);
+        if (!sender.getNickNme().equals(receiver)) {
           sender.sendMessage(message);
         }
-      } else {
-        message = String.format("[%s] %s", sender.getNickNme(), msg);
-        client.sendMessage(message);
+        return;
       }
     }
+    sender.sendMessage("User with the nickname: " + receiver + " was not found");
   }
 
   public void subscribe(ClientHandler client) {
     clients.add(client);
+    broadcastClientList();
   }
 
   public void unsubscribe(ClientHandler client) {
     clients.remove(client);
+    broadcastClientList();
   }
 
   public AuthService getAuthService() {
     return authService;
+  }
+
+  public boolean isLoginAuthorized(String login) {
+    for (ClientHandler client : clients) {
+      if (client.getLogin().equals(login)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public void broadcastClientList() {
+    StringBuilder sb = new StringBuilder(Commands.CLIENT_LIST);
+    for (ClientHandler client : clients) {
+      sb.append(" ").append(client.getNickNme());
+    }
+    String message = sb.toString();
+    for (ClientHandler client : clients) {
+      client.sendMessage(message);
+    }
   }
 }
 
