@@ -1,7 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
+import repository.Users;
 
 public class SimpleAuthService implements AuthService {
+
+  Users usersNew = new Users();
 
   private class UserData {
     String login;
@@ -27,12 +30,7 @@ public class SimpleAuthService implements AuthService {
 
   @Override
   public String getNickNameByLoginAndPassword(String login, String password) {
-    for (UserData user : users) {
-      if (user.login.equals(login) && user.password.equals(password)) {
-        return user.nickNme;
-      }
-    }
-    return null;
+    return usersNew.findNickNameByLoginAndPassword(login, password);
   }
 
   @Override
