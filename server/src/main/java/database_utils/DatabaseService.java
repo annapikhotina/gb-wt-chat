@@ -1,4 +1,4 @@
-package repository;
+package database_utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,7 +23,7 @@ public class DatabaseService {
 
   private void connect() throws ClassNotFoundException, SQLException {
     Class.forName("org.sqlite.JDBC");
-    connection = DriverManager.getConnection("jdbc:sqlite:main.db");
+    connection = DriverManager.getConnection("jdbc:sqlite:gb.main");
   }
 
   private void disconnect() throws SQLException {

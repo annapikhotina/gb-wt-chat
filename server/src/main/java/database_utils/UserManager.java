@@ -1,9 +1,11 @@
-package repository;
+package database_utils;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-public class Users {
+public class UserManager {
 
   private final DatabaseService databaseService = new DatabaseService();
 
@@ -12,7 +14,7 @@ public class Users {
 
     try {
       PreparedStatement statement = databaseService.getConnection().prepareStatement(
-        "SELECT nickname FROM USERS WHERE login = ? AND password = ? ;");
+        "SELECT nickname FROM USERS WHERE login = ? AND password = ?");
 
       statement.setString(1, login);
       statement.setString(2, password);

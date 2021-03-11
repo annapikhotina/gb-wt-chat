@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
-import repository.Users;
+import database_utils.UserManager;
 
 public class SimpleAuthService implements AuthService {
 
-  Users usersNew = new Users();
+  UserManager userManager = new UserManager();
 
   private class UserData {
     String login;
@@ -30,7 +30,7 @@ public class SimpleAuthService implements AuthService {
 
   @Override
   public String getNickNameByLoginAndPassword(String login, String password) {
-    return usersNew.findNickNameByLoginAndPassword(login, password);
+    return userManager.findNickNameByLoginAndPassword(login, password);
   }
 
   @Override
