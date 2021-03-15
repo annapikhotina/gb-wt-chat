@@ -40,4 +40,12 @@ public class SimpleAuthService implements AuthService {
     }
     return userManager.insertUser(login, password, nickname);
   }
+
+  @Override
+  public boolean updateNickname(String login, String nickname) {
+    if(userManager.isLoginExisted(nickname)) {
+      return false;
+    }
+    return userManager.updateNickname(login, nickname);
+  }
 }

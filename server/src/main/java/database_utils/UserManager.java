@@ -63,4 +63,19 @@ public class UserManager {
       return false;
     }
   }
+
+  public boolean updateNickname(String login, String nickname) {
+    try {
+      PreparedStatement prdStatement =
+        databaseService.getConnection().prepareStatement("UPDATE USERS SET nickname = ? WHERE login = ?");
+      prdStatement.setString(1, nickname);
+      prdStatement.setString(2, login);
+      prdStatement.executeUpdate();
+      return true;
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
 }

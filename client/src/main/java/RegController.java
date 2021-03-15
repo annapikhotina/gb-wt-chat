@@ -30,7 +30,6 @@ public class RegController {
       textArea.clear();
       textArea.appendText("Registration failed");
     }
-
   }
 
   public void tryToReg(ActionEvent actionEvent) {

@@ -74,6 +74,20 @@ public class ClientHandler {
                 sendMessage(Commands.RegNO);
               }
             }
+
+            //Update nickname
+            if(message.startsWith(Commands.UPDNICK)) {
+              String[] token = message.split("\\s", 2);
+              if (token.length < 2) {
+                continue;
+              }
+              boolean nickIsUpdated = server.getAuthService().updateNickname(this.login, token[1]);
+              if(nickIsUpdated) {
+                sendMessage(Commands.UPDNICKOK);
+              } else {
+                sendMessage(Commands.UPDNICKNO);
+              }
+            }
           }
 
           //Chatting
