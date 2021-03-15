@@ -3,7 +3,6 @@ package database_utils;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class UserManager {
 
@@ -11,14 +10,13 @@ public class UserManager {
 
   public String findNickNameByLoginAndPassword(String login, String password) {
     String nickName = "";
-
     try {
-      PreparedStatement statement = databaseService.getConnection().prepareStatement(
+      PreparedStatement prdStatement = databaseService.getConnection().prepareStatement(
         "SELECT nickname FROM USERS WHERE login = ? AND password = ?");
 
-      statement.setString(1, login);
-      statement.setString(2, password);
-      nickName = statement.executeQuery().getString("NICKNAME");
+      prdStatement.setString(1, login);
+      prdStatement.setString(2, password);
+      nickName = prdStatement.executeQuery().getString("NICKNAME");
     }
     catch (SQLException e) {
       e.printStackTrace();
@@ -31,5 +29,38 @@ public class UserManager {
     }
   }
 
+  public boolean isLoginExisted(String login) {
+    try {
+      PreparedStatement prdStatement =
+        databaseService.getConnection().prepareStatement("SELECT login FROM USERS WHERE login = ?");
+      prdStatement.setString(1, login);
+      ResultSet result = prdStatement.executeQuery();
+      if (!result.isClosed()) {
+        return result.getString("LOGIN").equals(login);
+      } else {
+        return false;
+      }
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return true;
+  }
 
+  public boolean insertUser(String login, String password, String nickname) {
+    try {
+      PreparedStatement prdStatement =
+        databaseService.getConnection().prepareStatement(
+          "INSERT INTO USERS (login, password, nickname) VALUES (?, ?, ?)");
+      prdStatement.setString(1, login);
+      prdStatement.setString(2, password);
+      prdStatement.setString(3, nickname);
+      prdStatement.executeUpdate();
+      return true;
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
 }
