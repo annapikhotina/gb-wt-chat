@@ -1,5 +1,6 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -68,16 +69,32 @@ public class ClientHandler {
 
               boolean regSuccess = server.getAuthService().registration(token[1], token[2], token[3]);
 
-              if(regSuccess) {
+              if (regSuccess) {
                 sendMessage(Commands.RegOK);
               } else {
                 sendMessage(Commands.RegNO);
+              }
+            }
+
+            //Update nickname
+            if (message.startsWith(Commands.UPDNICK)) {
+              String[] token = message.split("\\s", 2);
+              if (token.length < 2) {
+                continue;
+              }
+              boolean nickIsUpdated = server.getAuthService().updateNickname(this.login, token[1]);
+              if (nickIsUpdated) {
+                sendMessage(Commands.UPDNICKOK);
+              } else {
+                sendMessage(Commands.UPDNICKNO);
               }
             }
           }
 
           //Chatting
           while (true) {
+            File chatHistory = new File("server/src/main/resources/chat_history/" + this.login + ".txt");
+
             String message = in.readUTF();
 
             if (message.equals(Commands.END)) {
@@ -93,9 +110,11 @@ public class ClientHandler {
               }
 
               server.privateMessage(this, token[1], token[2]);
+              server.addHistory(chatHistory, token[1] + token[2]);
 
             } else {
               server.broadcastMessage(this, message);
+              server.addHistory(chatHistory, message);
             }
 
           }

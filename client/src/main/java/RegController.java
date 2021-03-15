@@ -23,12 +23,13 @@ public class RegController {
 
   public void setAuthResponse(String command) {
     if (command.equals(Commands.RegOK)) {
+      textArea.clear();
       textArea.appendText("Registration passed");
     }
     if (command.equals(Commands.RegNO)) {
+      textArea.clear();
       textArea.appendText("Registration failed");
     }
-
   }
 
   public void tryToReg(ActionEvent actionEvent) {

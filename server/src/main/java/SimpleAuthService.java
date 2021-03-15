@@ -1,7 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
+import database_utils.UserManager;
 
 public class SimpleAuthService implements AuthService {
+
+  UserManager userManager = new UserManager();
 
   private class UserData {
     String login;
@@ -27,22 +30,22 @@ public class SimpleAuthService implements AuthService {
 
   @Override
   public String getNickNameByLoginAndPassword(String login, String password) {
-    for (UserData user : users) {
-      if (user.login.equals(login) && user.password.equals(password)) {
-        return user.nickNme;
-      }
-    }
-    return null;
+    return userManager.findNickNameByLoginAndPassword(login, password);
   }
 
   @Override
   public boolean registration(String login, String password, String nickname) {
-    for (UserData user : users) {
-      if (user.login.equals(login) && user.nickNme.equals(nickname)) {
-        return false;
-      }
+    if (userManager.isLoginExisted(login)) {
+      return false;
     }
-    users.add(new UserData(login, password, nickname));
-    return true;
+    return userManager.insertUser(login, password, nickname);
+  }
+
+  @Override
+  public boolean updateNickname(String login, String nickname) {
+    if(userManager.isLoginExisted(nickname)) {
+      return false;
+    }
+    return userManager.updateNickname(login, nickname);
   }
 }

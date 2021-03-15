@@ -6,6 +6,15 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import com.sun.javafx.webkit.theme.RenderThemeImpl.FormMenuListButton?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.ComboBox?>
+<?import java.lang.String?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.MenuItem?>
 <VBox fx:controller="Controller"
       xmlns:fx="http://javafx.com/fxml" alignment="center">
 
@@ -19,6 +28,14 @@
                    onAction="#tryToLogin"/>
     <Button text="Login" HBox.hgrow="NEVER" minWidth="70" onAction="#tryToLogin"/>
     <Button text="Reg" HBox.hgrow="NEVER" minWidth="70" onAction="#showRegWindow"/>
+  </HBox>
+
+  <HBox fx:id="menuPanel" visible="false" managed="false">
+    <MenuBar>
+      <Menu text="Settings">
+        <MenuItem text="Change Nickname" onAction="#openUpdateNicknameWindow"/>
+      </Menu>
+    </MenuBar>
   </HBox>
 
   <HBox VBox.vgrow="ALWAYS">

@@ -1,6 +1,9 @@
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import commands.Commands;
@@ -60,6 +63,19 @@ public class Server {
       }
     }
     sender.sendMessage("User with the nickname: " + receiver + " was not found");
+  }
+
+  public void addHistory(File file, String string) {
+    try {
+      String message = string + "\n";
+      FileOutputStream out = new FileOutputStream(file, true);
+      out.write(message.getBytes(StandardCharsets.UTF_8));
+      out.flush();
+
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void subscribe(ClientHandler client) {

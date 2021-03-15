@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import commands.Commands;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -30,6 +31,8 @@ public class Controller implements Initializable {
   private Stage stage;
   private Stage regStage;
   private RegController regController;
+  private UpdateNickNameController updNickController;
+  private Stage updNickStage;
   private final int PORT = 8189;
   private final String IP_ADDRESS = "localhost";
   private Socket socket;
@@ -42,6 +45,8 @@ public class Controller implements Initializable {
   private HBox authPanel;
   @FXML
   private HBox messagePanel;
+  @FXML
+  public HBox menuPanel;
   @FXML
   private TextField loginField;
   @FXML
@@ -109,6 +114,14 @@ public class Controller implements Initializable {
               }
             } else {
               chatArea.appendText(message + "\n");
+            }
+
+            //Update Nickname
+            if (message.startsWith(Commands.UPDNICKOK)) {
+              updNickController.setUpdateRes(Commands.UPDNICKOK);
+            }
+            if (message.startsWith(Commands.UPDNICKNO)) {
+              updNickController.setUpdateRes(Commands.UPDNICKNO);
             }
           }
 
@@ -190,6 +203,8 @@ public class Controller implements Initializable {
     authPanel.setManaged(!authenticated);
     clientList.setVisible(authenticated);
     clientList.setManaged(authenticated);
+    menuPanel.setVisible(authenticated);
+    menuPanel.setManaged(authenticated);
 
     if (!authenticated) {
       nickname = "";
@@ -271,5 +286,46 @@ public class Controller implements Initializable {
       e.printStackTrace();
     }
   }
+
+  public void initUpdateNickWindow() {
+    try {
+      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/update_nickname.fxml"));
+      Parent root = fxmlLoader.load();
+
+      updNickController = fxmlLoader.getController();
+      updNickController.setController(this);
+
+      updNickStage = new Stage();
+      updNickStage.setTitle("Walkie Talkie - Settings");
+      updNickStage.getIcons().add(new Image("/images/send_button_paw.png"));
+      updNickStage.setScene(new Scene(root, 350, 450));
+      updNickStage.initStyle(StageStyle.UTILITY);
+      updNickStage.initModality(Modality.APPLICATION_MODAL);
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void openUpdateNicknameWindow(Event event) {
+    if (updNickStage == null) {
+      initUpdateNickWindow();
+    }
+    updNickStage.show();
+  }
+
+  public void updateNickname(String nickname) {
+    if (socket == null || socket.isClosed()) {
+      connect();
+    }
+
+    try {
+      out.writeUTF(String.format("%s %s", Commands.UPDNICK, nickname));
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
 }
 

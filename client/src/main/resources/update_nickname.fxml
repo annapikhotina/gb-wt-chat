@@ -1,0 +1,18 @@
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import java.net.URL?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<VBox fx:controller="UpdateNickNameController"
+      xmlns:fx="http://javafx.com/fxml" alignment="center">
+
+  <stylesheets>
+    <URL value="@/css/style.css"/>
+  </stylesheets>
+
+  <Label text="New Nickname"/>
+  <TextField fx:id="nicknameField" minHeight="NaN" promptText="Nickname..."/>
+  <Button fx:id="saveButton" text="Save" HBox.hgrow="NEVER" minWidth="70" onAction="#tryToUpdateNickname"/>
+
+</VBox>
